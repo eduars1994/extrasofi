@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrapolar Bins Metodo Sofia</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        input[type="button"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            white-space: pre-wrap; /* Permite mantener el formato en blanco */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Extrapolar Bins Metodo Sofia</h2>
+        <form id="calcForm">
+            <label for="num1">Número 1:</label>
+            <input type="text" id="num1" name="num1" maxlength="16" pattern="\d{16}" required>
+            <label for="num2">Número 2:</label>
+            <input type="text" id="num2" name="num2" maxlength="16" pattern="\d{16}" required>
+            <input type="button" value="Realizar Operación" onclick="performOperation()">
+        </form>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function formatNumber(num) {
+            // La función toma un número de 16 dígitos y reemplaza el dígito en la posición 9 y del 12 al 16 por X
+            let formatted = '';
+            for (let i = 0; i < num.length; i++) {
+                if (i === 4 || i === 8 || i === 12) {
+                    formatted += ' ';
+                }
+                formatted += (i === 8 || i >= 11) ? 'X' : num[i];
+            }
+            return formatted;
+        }
+
+        function performOperation() {
+            // Obtén los valores de los campos de entrada
+            const num1 = document.getElementById('num1').value;
+            const num2 = document.getElementById('num2').value;
+
+            // Valida que ambos números sean de 16 dígitos
+            if (num1.length !== 16 || num2.length !== 16) {
+                document.getElementById('result').textContent = 'Ambos números deben tener 16 dígitos.';
+                return;
+            }
+
+            // Extrae los dígitos en las posiciones 10 y 11 (índices 9 y 10)
+            const digit10Num1 = parseInt(num1[9], 10);
+            const digit11Num1 = parseInt(num1[10], 10);
+            const digit10Num2 = parseInt(num2[9], 10);
+            const digit11Num2 = parseInt(num2[10], 10);
+
+            // Suma los dígitos en las posiciones 10 y 11
+            const sumDigit10 = digit10Num1 + digit10Num2;
+            const sumDigit11 = digit11Num1 + digit11Num2;
+
+            // Realiza las operaciones adicionales
+            const resultDigit10 = (sumDigit10 / 2) * 5;
+            const resultDigit11 = (sumDigit11 / 2) * 5;
+
+            // Redondea los resultados al entero más cercano
+            const finalResultDigit10 = Math.floor(resultDigit10);
+            const finalResultDigit11 = Math.floor(resultDigit11);
+
+            // Suma los dos resultados obtenidos
+            const finalResult = finalResultDigit10 + finalResultDigit11;
+
+            // Obtén los primeros 8 dígitos del primer número
+            const first8Digits = num1.slice(0, 8);
+
+            // Concatena los primeros 8 dígitos con el resultado final y reemplaza los dígitos del 11 al 16 con "X"
+            const finalFormattedResult = `${first8Digits}${finalResult.toString().padStart(2, '0')}XXXXXX`;
+
+            // Aplica el formato a los números
+            const formattedNum1 = formatNumber(num1);
+            const formattedNum2 = formatNumber(num2);
+
+            // Muestra el resultado
+            document.getElementById('result').textContent = 
+                `${formattedNum1}\n` +
+                `${formattedNum2}\n` +
+                `Suma dígitos 10: ${sumDigit10}\n` +
+                `Suma dígitos 11: ${sumDigit11}\n` +
+                `Resultado dígitos 10 después de operaciones: ${finalResultDigit10}\n` +
+                `Resultado dígitos 11 después de operaciones: ${finalResultDigit11}\n` +
+                `Resultado final: ${finalFormattedResult}`;
+        }
+    </script>
+</body>
+</html>
